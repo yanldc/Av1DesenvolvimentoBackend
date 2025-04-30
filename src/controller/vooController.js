@@ -1,72 +1,53 @@
-const mongoose = require('mongoose');
-const State = require('../model/state');
-const Voo = require('.../model/voo');
 const { validationResult, matchedData } = require('express-validator');
+const vooService = require('../service/vooService');
 
 module.exports = {
-    getStates: async (req, res) => {
-        let states = await State.find({});
-        if (!states) {
-            return res.status(404).json({ message: 'States not found' });
-        }
-        res.json(states);
-    },
     getVoo: async (req, res) => {
+        const voo = await vooService.getAllvoo();
+        return res.json({ voo });
+    },
+
+    postVoo: async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(422).json({ errors: errors.mapped() });
+            return res.status(400).json({ error: errors.mapped() });
         }
 
         const data = matchedData(req);
-        let update = {};
-        if (data.name) {
-            update.name = data.name;
+
+        try {
+            const newVoo = await vooService.createVoo(data);
+            return res.status(201).json({ voo: newVoo });
+        } catch (err) {
+            return res.status(400).json({ error: err.message });
+        }
+    },
+
+    editVoo: async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ error: errors.mapped() });
         }
 
-        if (data.email) {
-            const emailCheck = await User.findOne({ email: data.email });
-            if (emailCheck) {
-                return res.status(422).json({ error: 'Email already exists' });
-            }
-            update.email = data.email;
-        }
+        const data = matchedData(req);
+        const vooId = req.params.id; 
 
-        if (data.state) {
-            if(mongoose.Types.ObjectId.isValid(data.state)) {
-                const stateCheck = await State.findById(data.state);
-                if (!stateCheck) {
-                    return res.status(422).json({ error: 'State not found' });
-                }
-                update.state = data.state;
-            }else{
-                res.status(422).json({ error: 'Invalid state' });
-                return;
-            }
-        }
-
-        if (data.passwordHash) {
-            update.passwordHash = await bcrypt.hash(data.passwordHash, 10);
-        }
-
-        if (data.phone) {
-            update.phone = data.phone;
-        }
-
-        if (data.address) {
-            update.address = data.address;
-        }
-
-        if (data.idade) {
-            update.idade = data.idade;
-        }
-
-        await Voo.findByIdAndUpdate({token: data.token}, {$setUpdate: update});
-        res.json({ message: 'User updated successfully' });
-
-        let voo = await Voo.find({});
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        res.json(voo);
+        try {
+            await vooService.editvoo(vooId, data); 
+            return res.status(200).json({ success: true });
+        } catch (err) {
+            return res.status(400).json({ error: err.message });
     }
+    },
+
+    deleteVoo: async (req, res) => {
+        const vooId = req.params.id; 
+
+        try {
+            await vooService.deleteVoo(vooId); 
+            return res.status(200).json({ success: true });
+        } catch (err) {
+            return res.status(400).json({ error: err.message });
+    }
+    },
 };
