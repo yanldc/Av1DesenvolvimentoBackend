@@ -40,6 +40,5 @@ module.exports = {
       deletePassageiroById: async (id) => {
         return await Passageiro.findByIdAndDelete(id);
       }
-
-    
+ 
 };
