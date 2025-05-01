@@ -20,5 +20,9 @@ module.exports = {
 
   setDisponibilidade: async (portaoId, disponivel) => {
     return await Portao.findByIdAndUpdate(portaoId, { $set: { disponivel } }, { new: true });
+  },
+
+  deletePortaoById: async (id) => {
+    return await Portao.findByIdAndDelete(id);
   }
 };

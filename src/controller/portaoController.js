@@ -3,7 +3,7 @@ const portaoService = require('../service/portaoService');
 
 module.exports = {
     getPortao: async (req, res) => {
-        const portao = await portaoService.getAllPortao();
+        const portao = await portaoService.getAllPortaos();
         return res.json({ portao });
     },
 

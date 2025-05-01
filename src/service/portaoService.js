@@ -1,7 +1,7 @@
 const portaoRepository = require('../repository/portaoRepository');
 
 module.exports = {
-  getAllportaos: async () => {
+  getAllPortaos: async () => {
     return await portaoRepository.findAllPortaos();
   },
 
@@ -14,12 +14,16 @@ module.exports = {
     return await portaoRepository.createPortao(portaoData);
   },
 
-  editportao: async (id, data) => {
+  editPortao: async (id, data) => {
     const updates = {};
 
     if (data.codigo) updates.codigo = data.codigo;
     if (data.status) updates.status = data.status;
 
     return await portaoRepository.updatePortaoById(id, updates);
+  },
+
+  deletePortao: async (id) => {
+    return await portaoRepository.deletePortaoById(id);
   },
 };

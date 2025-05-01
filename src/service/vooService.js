@@ -46,5 +46,9 @@ module.exports = {
     }
 
     return vooAtualizado;
-  }
+  },
+
+  deleteVoo: async (id) => {
+      return await vooRepository.deleteVooById(id);
+    },
 };

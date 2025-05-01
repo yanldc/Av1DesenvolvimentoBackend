@@ -79,4 +79,8 @@ module.exports = {
 
     return await passageiroRepository.updatePassageiroById(id, updates);
   },
+
+  deletePassageiro: async (id) => {
+        return await vooRepository.deletePassageiroById(id);
+      },
 };

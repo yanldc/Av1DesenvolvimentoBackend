@@ -35,5 +35,9 @@ module.exports = {
     }
 
     return await Voo.findByIdAndUpdate(id, { $set: updates }, { new: true });
+  },
+
+  deleteVooById: async (id) => {
+    return await Voo.findByIdAndDelete(id);
   }
 };
