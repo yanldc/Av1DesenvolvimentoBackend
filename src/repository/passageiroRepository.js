@@ -1,4 +1,4 @@
-const User = require('../model/user');
+const User = require('../model/passageiro');
 
 module.exports = {
     findAllPassageiros: async () => {
@@ -20,7 +20,22 @@ module.exports = {
     createPassageiro: async (passageiroData) => {
         const newPassageiro = new Passageiro(passageiroData);
         return await newPassageiro.save();
-    }
+    },
+
+    updateCheckInStatusByVooId: async (vooId, statusVoo) => {
+        let novoStatusCheckIn;
+    
+        if (statusVoo === 'embarque') {
+          novoStatusCheckIn = 'liberado';
+        } else {
+          novoStatusCheckIn = 'bloqueado';
+        }
+    
+        await Passageiro.updateMany(
+          { vooId },
+          { $set: { statusCheckIn: novoStatusCheckIn } }
+        );
+      }
 
     
 };

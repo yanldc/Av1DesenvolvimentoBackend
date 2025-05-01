@@ -9,7 +9,7 @@ const modelSchema = new mongoose.Schema({
         ref: 'Voo', 
         required: true
     },
-    statusCheckIn:true,
+    statusCheckIn: String,
 });
 
 const modelName = 'Passageiro'

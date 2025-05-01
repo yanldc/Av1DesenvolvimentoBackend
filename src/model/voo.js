@@ -5,7 +5,7 @@ const modelSchema = new mongoose.Schema({
     numeroVoo: Number,
     origem: String,
     destino: String,
-    dataHoraPartida: date,
+    dataHoraPartida: Date,
     portaoId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Portao', 
