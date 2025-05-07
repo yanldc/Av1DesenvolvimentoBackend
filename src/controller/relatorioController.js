@@ -1,22 +1,39 @@
-const passageiroService = require('../service/passageiroService');
 const vooService = require('../service/vooService');
-const portaoService = require('../service/portaoService');
+const passageiroService = require('../service/passageiroService');
 
 module.exports = {
   getRelatorio: async (req, res) => {
     try {
-      const passageiros = await passageiroService.getAllPassageiros();
-      const voos = await vooService.getAllVoos();
-      const portoes = await portaoService.getAllPortaos();
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+      const amanha = new Date(hoje);
+      amanha.setDate(hoje.getDate() + 1);
 
-      return res.status(200).json({
-        relatorio: {
-          passageiros,
-          voos,
-          portoes
-        }
-      });
+      const voos = await vooService.findVoosDoDia(hoje, amanha);
+
+      const relatorio = [];
+
+      for (const voo of voos) {
+        const passageiros = await passageiroService.getPassageirosPorVooId(voo._id);
+
+        const passageirosFormatados = passageiros.map(p => ({
+          nome: p.nome,
+          cpf: p.cpf,
+          statusCheckIn: p.statusCheckIn
+        }));
+
+        relatorio.push({
+          numeroVoo: voo.numeroVoo,
+          origem: voo.origem,
+          destino: voo.destino,
+          dataHoraPartida: voo.dataHoraPartida,
+          passageiros: passageirosFormatados
+        });
+      }
+
+      return res.status(200).json({ relatorio });
     } catch (err) {
+      console.error(err);
       return res.status(500).json({ error: 'Erro ao gerar relatório', detalhes: err.message });
     }
   }

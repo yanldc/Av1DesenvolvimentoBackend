@@ -49,6 +49,11 @@ module.exports = {
   },
 
   deleteVoo: async (id) => {
-      return await vooRepository.deleteVooById(id);
-    },
+    return await vooRepository.deleteVooById(id);
+  },
+
+  findVoosDoDia: async (dataInicio, dataFim) => {
+    const statusPermitidos = ['programado', 'embarque']; 
+    return await vooRepository.findVoosPorDataEStatusMultiplos(dataInicio, dataFim, statusPermitidos);
+  }
 };

@@ -39,6 +39,10 @@ module.exports = {
 
       deletePassageiroById: async (id) => {
         return await Passageiro.findByIdAndDelete(id);
+      },
+
+      findPassageirosByVooId: async (vooId) => {
+        return await Passageiro.find({ vooId });
       }
  
 };
