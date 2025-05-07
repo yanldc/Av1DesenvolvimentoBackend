@@ -3,7 +3,7 @@ const passageiroService = require('../service/passageiroService');
 
 module.exports = {
     getPassageiro: async (req, res) => {
-        const passageiro = await passageiroService.getAllPassageiro();
+        const passageiro = await passageiroService.getAllPassageiros();
         return res.json({ passageiro });
     },
 

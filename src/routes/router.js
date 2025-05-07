@@ -20,7 +20,7 @@ router.put('/voo/:id', vooValidator.editVooAction, vooController.editVoo )
 router.delete('/voo/:id', vooController.deleteVoo )
 
 router.get('/portao', portaoController.getPortao);
-router.post('/portao', portaoValidator.postActionPortao, portaoController.postPortao)
+router.post('/portao', portaoValidator.postPortaoAction, portaoController.postPortao)
 router.put('/portao/:id', portaoValidator.editPortaoAction, portaoController.editPortao )
 router.delete('/portao/:id', portaoController.deletePortao )
 

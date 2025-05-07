@@ -1,5 +1,6 @@
 const Voo = require('../model/voo');
 const portaoRepository = require('./portaoRepository');
+const passageiroRepository = require('../repository/passageiroRepository');
 
 module.exports = {
   findAllVoos: async () => {

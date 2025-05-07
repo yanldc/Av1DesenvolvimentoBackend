@@ -1,11 +1,11 @@
-const User = require('../model/passageiro');
+const Passageiro = require('../model/passageiro');
 
 module.exports = {
     findAllPassageiros: async () => {
         return await Passageiro.find();
     },
 
-    findUserByCpf: async (cpf) => {
+    findPassageiroByCpf: async (cpf) => {
         return await Passageiro.findOne({ cpf });
     },
 

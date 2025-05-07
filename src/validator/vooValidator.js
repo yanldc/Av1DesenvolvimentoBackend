@@ -1,4 +1,5 @@
 const { checkSchema } = require('express-validator');
+const moment = require('moment');
 
 const validStatuses = ['programado', 'embarque', 'concluido'];
 
@@ -18,8 +19,12 @@ module.exports = {
     },
     dataHoraPartida: {
       notEmpty: true,
-      isISO8601: true,
-      errorMessage: 'Data de partida inválida'
+      custom: {
+        options: (value) => {
+          return moment(value, 'DD-MM-YYYY HH:mm', true).isValid();
+        },
+        errorMessage: 'Data de partida inválida'
+      }
     },
     portaoId: {
       notEmpty: true,
@@ -35,8 +40,39 @@ module.exports = {
   }),
 
   editVooAction: checkSchema({
+        numeroVoo: {
+      optional: true,
+      notEmpty: true,
+      trim: true
+    },
+    origem: {
+      optional: true,
+      notEmpty: true,
+      errorMessage: 'Origem obrigatória'
+    },
+    destino: {
+      optional: true,
+      notEmpty: true,
+      errorMessage: 'Destino obrigatório'
+    },
+    dataHoraPartida: {
+      optional: true,
+      notEmpty: true,
+      custom: {
+        options: (value) => {
+          return moment(value, 'DD-MM-YYYY HH:mm', true).isValid();
+        },
+        errorMessage: 'Data de partida inválida'
+      }
+    },
+    portaoId: {
+      optional: true,
+      notEmpty: true,
+      errorMessage: 'portaoId é obrigatório'
+    },
     status: {
       optional: true,
+      notEmpty: true,
       isIn: {
         options: [validStatuses],
         errorMessage: `Status inválido. Use: ${validStatuses.join(', ')}`
