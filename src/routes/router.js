@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passageiroController = require('../controller/passageiroController');
 const passageiroValidator = require('../validator/passageiroValidator');
+const relatorioController = require('../controller/relatorioController');
 
 const vooController = require('../controller/vooController');
 const vooValidator = require('../validator/vooValidator');
@@ -23,5 +24,7 @@ router.get('/portao', portaoController.getPortao);
 router.post('/portao', portaoValidator.postPortaoAction, portaoController.postPortao)
 router.put('/portao/:id', portaoValidator.editPortaoAction, portaoController.editPortao )
 router.delete('/portao/:id', portaoController.deletePortao )
+
+router.get('/relatorio', relatorioController.getRelatorio);
 
 module.exports = router;
