@@ -15,10 +15,12 @@ module.exports = {
 
   editPortaoAction: checkSchema({
     codigo: {
+        optional: true,
         notEmpty: true,
         trim: true,
       },
       disponivel: {
+        optional: true,
         notEmpty: true,
         isBoolean: true,
       },

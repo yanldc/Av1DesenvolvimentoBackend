@@ -1,5 +1,6 @@
 const Voo = require('../model/voo');
 const portaoRepository = require('./portaoRepository');
+const passageiroRepository = require('../repository/passageiroRepository');
 
 module.exports = {
   findAllVoos: async () => {
@@ -35,5 +36,9 @@ module.exports = {
     }
 
     return await Voo.findByIdAndUpdate(id, { $set: updates }, { new: true });
+  },
+
+  deleteVooById: async (id) => {
+    return await Voo.findByIdAndDelete(id);
   }
 };

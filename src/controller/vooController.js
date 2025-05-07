@@ -3,7 +3,7 @@ const vooService = require('../service/vooService');
 
 module.exports = {
     getVoo: async (req, res) => {
-        const voo = await vooService.getAllvoo();
+        const voo = await vooService.getAllVoos();
         return res.json({ voo });
     },
 
@@ -33,7 +33,7 @@ module.exports = {
         const vooId = req.params.id; 
 
         try {
-            await vooService.editvoo(vooId, data); 
+            await vooService.editVoo(vooId, data); 
             return res.status(200).json({ success: true });
         } catch (err) {
             return res.status(400).json({ error: err.message });

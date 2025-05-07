@@ -40,7 +40,7 @@ module.exports = {
     const cpfExists = await passageiroRepository.findPassageiroByCpf(data.cpf);
     if (cpfExists) throw new Error('CPF já cadastrado');
 
-    const voo = await vooRepository.getVooById(data.vooId);
+    const voo = await vooRepository.findById(data.vooId);
     if (!voo) throw new Error('Voo não encontrado');
     if (voo.status !== 'embarque') {
       throw new Error('Check-in só permitido quando voo estiver em embarque');
@@ -79,4 +79,8 @@ module.exports = {
 
     return await passageiroRepository.updatePassageiroById(id, updates);
   },
+
+  deletePassageiro: async (id) => {
+        return await passageiroRepository.deletePassageiroById(id);
+      },
 };

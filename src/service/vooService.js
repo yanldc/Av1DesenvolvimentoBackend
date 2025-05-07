@@ -7,7 +7,7 @@ module.exports = {
     return await vooRepository.findAllVoos();
   },
 
-  createvoo: async (data) => {
+  createVoo: async (data) => {
     const vooData = {
       numeroVoo: data.numeroVoo,
       origem: data.origem,
@@ -20,7 +20,7 @@ module.exports = {
     return await vooRepository.createVoo(vooData);
   },
 
-  editvoo: async (id, data) => {
+  editVoo: async (id, data) => {
     const updates = {};
     let atualizarStatusPassageiros = false;
 
@@ -46,5 +46,9 @@ module.exports = {
     }
 
     return vooAtualizado;
-  }
+  },
+
+  deleteVoo: async (id) => {
+      return await vooRepository.deleteVooById(id);
+    },
 };
