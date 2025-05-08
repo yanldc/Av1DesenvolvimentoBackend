@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const passageiroRepository = require('../repository/passageiroRepository');
 const vooRepository = require('../repository/vooRepository');
 
@@ -49,7 +50,7 @@ module.exports = {
     const passageiroData = {
       nome: data.name,
       cpf: data.cpf,
-      vooId: data.vooId,
+      vooId: new mongoose.Types.ObjectId(data.vooId), // ✅ Conversão segura
       statusCheckIn: 'pendente',
     };
 
@@ -68,12 +69,23 @@ module.exports = {
       updates.cpf = data.cpf;
     }
 
-    if (data.vooId) updates.vooId = data.vooId;
+    if (data.vooId) updates.vooId = new mongoose.Types.ObjectId(data.vooId);
 
     if (data.statusCheckIn) {
       if (data.statusCheckIn !== 'realizado') {
         throw new Error('StatusCheckIn só pode ser "realizado" na edição');
       }
+
+      const passageiro = await passageiroRepository.findById(id);
+      if (!passageiro) throw new Error('Passageiro não encontrado');
+
+      const voo = await vooRepository.findById(passageiro.vooId);
+      if (!voo) throw new Error('Voo associado não encontrado');
+
+      if (voo.status !== 'embarque') {
+        throw new Error('Check-in só pode ser realizado se o voo estiver em embarque');
+      }
+
       updates.statusCheckIn = data.statusCheckIn;
     }
 
@@ -81,10 +93,10 @@ module.exports = {
   },
 
   deletePassageiro: async (id) => {
-        return await passageiroRepository.deletePassageiroById(id);
-      },
+    return await passageiroRepository.deletePassageiroById(id);
+  },
 
   getPassageirosPorVooId: async (vooId) => {
-        return await passageiroRepository.findPassageirosByVooId(vooId);
-      }
+    return await passageiroRepository.findAllPassageirosByVoo(vooId);
+  }
 };
