@@ -7,6 +7,17 @@ module.exports = {
         return res.json({ passageiro });
     },
 
+    getPassageiroByVoo: async (req, res) => {
+        const { vooId } = req.params;
+    
+        try {
+            const passageiros = await passageiroService.getPassageirosPorVooId(vooId);
+            return res.status(200).json({ passageiros });
+        } catch (err) {
+            return res.status(400).json({ error: err.message });
+        }
+    },
+
     postPassageiro: async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

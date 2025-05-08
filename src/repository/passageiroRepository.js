@@ -1,48 +1,55 @@
+const mongoose = require('mongoose');
 const Passageiro = require('../model/passageiro');
 
 module.exports = {
-    findAllPassageiros: async () => {
-        return await Passageiro.find();
-    },
+  findAllPassageiros: async () => {
+    return await Passageiro.find();
+  },
 
-    findPassageiroByCpf: async (cpf) => {
-        return await Passageiro.findOne({ cpf });
-    },
+  findAllPassageirosByVoo: async (vooId) => {
+    return await Passageiro.find({
+      vooId: new mongoose.Types.ObjectId(vooId)
+    });
+  },
 
-    findById: async (id) => {
-        return await Passageiro.findOne({ id });
-    },
+  findPassageiroByCpf: async (cpf) => {
+    return await Passageiro.findOne({ cpf });
+  },
 
-    updatePassageiroById: async (id, updates) => {
-    return await Passageiro.findByIdAndUpdate(id, { $set: updates }, { new: true });
-    },
+  findById: async (id) => {
+    return await Passageiro.findById(id);
+  },
 
-    createPassageiro: async (passageiroData) => {
-        const newPassageiro = new Passageiro(passageiroData);
-        return await newPassageiro.save();
-    },
+  updatePassageiroById: async (id, updates) => {
+    return await Passageiro.findByIdAndUpdate(
+      id,
+      { $set: updates },
+      { new: true }
+    );
+  },
 
-    updateCheckInStatusByVooId: async (vooId, statusVoo) => {
-        let novoStatusCheckIn;
-    
-        if (statusVoo === 'embarque') {
-          novoStatusCheckIn = 'liberado';
-        } else {
-          novoStatusCheckIn = 'bloqueado';
-        }
-    
-        await Passageiro.updateMany(
-          { vooId },
-          { $set: { statusCheckIn: novoStatusCheckIn } }
-        );
-      },
+  createPassageiro: async (passageiroData) => {
+    const newPassageiro = new Passageiro(passageiroData);
+    return await newPassageiro.save();
+  },
 
-      deletePassageiroById: async (id) => {
-        return await Passageiro.findByIdAndDelete(id);
-      },
+  updateCheckInStatusByVooId: async (vooId, statusVoo) => {
+    const novoStatusCheckIn =
+      statusVoo === 'embarque' ? 'liberado' : 'bloqueado';
 
-      findPassageirosByVooId: async (vooId) => {
-        return await Passageiro.find({ vooId });
-      }
- 
+    await Passageiro.updateMany(
+      { vooId: new mongoose.Types.ObjectId(vooId) },
+      { $set: { statusCheckIn: novoStatusCheckIn } }
+    );
+  },
+
+  deletePassageiroById: async (id) => {
+    return await Passageiro.findByIdAndDelete(id);
+  },
+
+  findPassageirosByVooId: async (vooId) => {
+    return await Passageiro.find({
+      vooId: new mongoose.Types.ObjectId(vooId)
+    });
+  }
 };

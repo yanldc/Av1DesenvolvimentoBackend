@@ -11,6 +11,7 @@ const portaoController = require('../controller/portaoController');
 const portaoValidator = require('../validator/portaoValidator');
 
 router.get('/passageiro', passageiroController.getPassageiro);
+router.get('/passageiro/:vooId', passageiroController.getPassageiroByVoo);
 router.post('/passageiro', passageiroValidator.postPassageiroAction, passageiroController.postPassageiro)
 router.put('/passageiro/:id', passageiroValidator.editPassageiroAction, passageiroController.editPassageiro )
 router.delete('/passageiro/:id', passageiroController.deletePassageiro )
