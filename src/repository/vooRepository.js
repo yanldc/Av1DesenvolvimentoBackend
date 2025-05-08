@@ -40,5 +40,12 @@ module.exports = {
 
   deleteVooById: async (id) => {
     return await Voo.findByIdAndDelete(id);
+  },
+
+  findVoosPorDataEStatusMultiplos: async (inicio, fim, statusArray) => {
+    return await Voo.find({
+      status: { $in: statusArray },
+      dataHoraPartida: { $gte: inicio, $lt: fim }
+    });
   }
 };

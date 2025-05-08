@@ -25,6 +25,6 @@ router.post('/portao', portaoValidator.postPortaoAction, portaoController.postPo
 router.put('/portao/:id', portaoValidator.editPortaoAction, portaoController.editPortao )
 router.delete('/portao/:id', portaoController.deletePortao )
 
-router.get('/relatorio-diario', relatorioController.getRelatorioDiario);
+router.get('/relatorio', relatorioController.getRelatorio);
 
 module.exports = router;
