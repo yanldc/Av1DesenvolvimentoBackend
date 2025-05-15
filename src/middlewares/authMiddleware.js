@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
             return res.status(403).json({ error: "Token inválido ou expirado." });
         }
 
-        req.funcionario = {
+        req.user = {
             id: decoded.id,
             nome: decoded.nome,
             cargo: decoded.cargo

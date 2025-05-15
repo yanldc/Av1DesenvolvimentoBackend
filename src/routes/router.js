@@ -16,6 +16,8 @@ const funcionarioValidator = require('../validator/funcionarioValidator')
 const authController = require('../controller/authController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
+const checkAdmin = require('../middlewares/checkAdmin');
+
 
 
 router.get('/passageiro', passageiroController.getPassageiro);
@@ -39,6 +41,6 @@ router.post('/login', authController.login);
 
 router.use(authMiddleware)
 router.post('/voo', vooValidator.postVooAction, vooController.postVoo)
-router.put('/voo/:id', vooValidator.editVooAction, vooController.editVoo )
+router.put('/voo/:id', vooValidator.editVooAction, checkAdmin, vooController.editVoo )
 
 module.exports = router;
