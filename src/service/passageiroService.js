@@ -50,7 +50,7 @@ module.exports = {
     const passageiroData = {
       nome: data.name,
       cpf: data.cpf,
-      vooId: new mongoose.Types.ObjectId(data.vooId), // ✅ Conversão segura
+      vooId: new mongoose.Types.ObjectId(data.vooId),
       statusCheckIn: 'pendente',
     };
 
