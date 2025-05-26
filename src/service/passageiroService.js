@@ -30,73 +30,138 @@ function validarCpf(cpf) {
 
 module.exports = {
   getAllPassageiros: async () => {
-    return await passageiroRepository.findAllPassageiros();
+    try {
+      return await passageiroRepository.findAllPassageiros();
+    } catch (err) {
+      const error = new Error(err.message);
+      error.status = 500;
+      throw error;
+    }
   },
 
   createPassageiro: async (data) => {
-    if (!validarCpf(data.cpf)) {
-      throw new Error('CPF inválido');
+    try {
+      if (!validarCpf(data.cpf)) {
+        const error = new Error('CPF inválido');
+        error.status = 400;
+        throw error;
+      }
+
+      const cpfExists = await passageiroRepository.findPassageiroByCpf(data.cpf);
+      if (cpfExists) {
+        const error = new Error('CPF já cadastrado');
+        error.status = 400;
+        throw error;
+      }
+
+      const voo = await vooRepository.findById(data.vooId);
+      if (!voo) {
+        const error = new Error('Voo não encontrado');
+        error.status = 404;
+        throw error;
+      }
+      
+      if (voo.status !== 'embarque') {
+        const error = new Error('Check-in só permitido quando voo estiver em embarque');
+        error.status = 400;
+        throw error;
+      }
+
+      const passageiroData = {
+        nome: data.nome,
+        cpf: data.cpf,
+        vooId: new mongoose.Types.ObjectId(data.vooId),
+        statusCheckIn: 'pendente',
+      };
+
+      return await passageiroRepository.createPassageiro(passageiroData);
+    } catch (err) {
+      if (!err.status) {
+        err.status = 400;
+      }
+      throw err;
     }
-
-    const cpfExists = await passageiroRepository.findPassageiroByCpf(data.cpf);
-    if (cpfExists) throw new Error('CPF já cadastrado');
-
-    const voo = await vooRepository.findById(data.vooId);
-    if (!voo) throw new Error('Voo não encontrado');
-    if (voo.status !== 'embarque') {
-      throw new Error('Check-in só permitido quando voo estiver em embarque');
-    }
-
-    const passageiroData = {
-      nome: data.name,
-      cpf: data.cpf,
-      vooId: new mongoose.Types.ObjectId(data.vooId),
-      statusCheckIn: 'pendente',
-    };
-
-    return await passageiroRepository.createPassageiro(passageiroData);
   },
 
   editPassageiro: async (id, data) => {
-    const updates = {};
+    try {
+      const updates = {};
 
-    if (data.nome) updates.nome = data.nome;
+      if (data.nome) updates.nome = data.nome;
 
-    if (data.cpf) {
-      const cpfExists = await passageiroRepository.findPassageiroByCpf(data.cpf);
-      if (cpfExists) throw new Error('CPF já existe em outra conta');
-      if (!validarCpf(data.cpf)) throw new Error('CPF inválido');
-      updates.cpf = data.cpf;
-    }
-
-    if (data.vooId) updates.vooId = new mongoose.Types.ObjectId(data.vooId);
-
-    if (data.statusCheckIn) {
-      if (data.statusCheckIn !== 'realizado') {
-        throw new Error('StatusCheckIn só pode ser "realizado" na edição');
+      if (data.cpf) {
+        const cpfExists = await passageiroRepository.findPassageiroByCpf(data.cpf);
+        if (cpfExists && cpfExists._id.toString() !== id) {
+          const error = new Error('CPF já existe em outra conta');
+          error.status = 400;
+          throw error;
+        }
+        if (!validarCpf(data.cpf)) {
+          const error = new Error('CPF inválido');
+          error.status = 400;
+          throw error;
+        }
+        updates.cpf = data.cpf;
       }
 
-      const passageiro = await passageiroRepository.findById(id);
-      if (!passageiro) throw new Error('Passageiro não encontrado');
+      if (data.vooId) updates.vooId = new mongoose.Types.ObjectId(data.vooId);
 
-      const voo = await vooRepository.findById(passageiro.vooId);
-      if (!voo) throw new Error('Voo associado não encontrado');
+      if (data.statusCheckIn) {
+        if (data.statusCheckIn !== 'realizado') {
+          const error = new Error('StatusCheckIn só pode ser "realizado" na edição');
+          error.status = 400;
+          throw error;
+        }
 
-      if (voo.status !== 'embarque') {
-        throw new Error('Check-in só pode ser realizado se o voo estiver em embarque');
+        const passageiro = await passageiroRepository.findById(id);
+        if (!passageiro) {
+          const error = new Error('Passageiro não encontrado');
+          error.status = 404;
+          throw error;
+        }
+
+        const voo = await vooRepository.findById(passageiro.vooId);
+        if (!voo) {
+          const error = new Error('Voo associado não encontrado');
+          error.status = 404;
+          throw error;
+        }
+
+        if (voo.status !== 'embarque') {
+          const error = new Error('Check-in só pode ser realizado se o voo estiver em embarque');
+          error.status = 400;
+          throw error;
+        }
+
+        updates.statusCheckIn = data.statusCheckIn;
       }
 
-      updates.statusCheckIn = data.statusCheckIn;
+      return await passageiroRepository.updatePassageiroById(id, updates);
+    } catch (err) {
+      if (!err.status) {
+        err.status = 400;
+      }
+      throw err;
     }
-
-    return await passageiroRepository.updatePassageiroById(id, updates);
   },
 
   deletePassageiro: async (id) => {
-    return await passageiroRepository.deletePassageiroById(id);
+    try {
+      return await passageiroRepository.deletePassageiroById(id);
+    } catch (err) {
+      const error = new Error(err.message);
+      error.status = 400;
+      throw error;
+    }
   },
 
   getPassageirosPorVooId: async (vooId) => {
-    return await passageiroRepository.findAllPassageirosByVoo(vooId);
+    try {
+      return await passageiroRepository.findAllPassageirosByVoo(vooId);
+    } catch (err) {
+      const error = new Error(err.message);
+      error.status = 400;
+      throw error;
+    }
   }
 };

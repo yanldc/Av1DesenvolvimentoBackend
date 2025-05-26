@@ -21,7 +21,10 @@ module.exports = {
       notEmpty: true,
       custom: {
         options: (value) => {
-          return moment(value, 'DD-MM-YYYY HH:mm', true).isValid();
+          const date = moment(value, 'DD-MM-YYYY HH:mm', true);
+          if (!date.isValid()) return false;
+          // Convert to JavaScript Date for MongoDB
+          return true;
         },
         errorMessage: 'Data de partida inválida'
       }
@@ -40,7 +43,7 @@ module.exports = {
   }),
 
   editVooAction: checkSchema({
-        numeroVoo: {
+    numeroVoo: {
       optional: true,
       notEmpty: true,
       trim: true
@@ -60,7 +63,10 @@ module.exports = {
       notEmpty: true,
       custom: {
         options: (value) => {
-          return moment(value, 'DD-MM-YYYY HH:mm', true).isValid();
+          const date = moment(value, 'DD-MM-YYYY HH:mm', true);
+          if (!date.isValid()) return false;
+          // Convert to JavaScript Date for MongoDB
+          return true;
         },
         errorMessage: 'Data de partida inválida'
       }

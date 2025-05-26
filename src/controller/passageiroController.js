@@ -3,8 +3,12 @@ const passageiroService = require('../service/passageiroService');
 
 module.exports = {
     getPassageiro: async (req, res) => {
-        const passageiro = await passageiroService.getAllPassageiros();
-        return res.json({ passageiro });
+        try {
+            const passageiro = await passageiroService.getAllPassageiros();
+            return res.json({ passageiro });
+        } catch (err) {
+            return res.status(err.status || 500).json({ error: err.message });
+        }
     },
 
     getPassageiroByVoo: async (req, res) => {
@@ -14,7 +18,7 @@ module.exports = {
             const passageiros = await passageiroService.getPassageirosPorVooId(vooId);
             return res.status(200).json({ passageiros });
         } catch (err) {
-            return res.status(400).json({ error: err.message });
+            return res.status(err.status || 400).json({ error: err.message });
         }
     },
 
@@ -30,7 +34,7 @@ module.exports = {
             const newPassageiro = await passageiroService.createPassageiro(data);
             return res.status(201).json({ passageiro: newPassageiro });
         } catch (err) {
-            return res.status(400).json({ error: err.message });
+            return res.status(err.status || 400).json({ error: err.message });
         }
     },
 
@@ -44,11 +48,11 @@ module.exports = {
         const passageiroId = req.params.id; 
 
         try {
-            await passageiroService.editPassageiro(passageiroId, data); 
-            return res.status(200).json({ success: true });
+            const updatedPassageiro = await passageiroService.editPassageiro(passageiroId, data); 
+            return res.status(200).json({ success: true, passageiro: updatedPassageiro });
         } catch (err) {
-            return res.status(400).json({ error: err.message });
-    }
+            return res.status(err.status || 400).json({ error: err.message });
+        }
     },
 
     deletePassageiro: async (req, res) => {
@@ -58,7 +62,7 @@ module.exports = {
             await passageiroService.deletePassageiro(passageiroId); 
             return res.status(200).json({ success: true });
         } catch (err) {
-            return res.status(400).json({ error: err.message });
-    }
+            return res.status(err.status || 400).json({ error: err.message });
+        }
     },
 };

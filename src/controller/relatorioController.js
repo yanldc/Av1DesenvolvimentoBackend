@@ -33,8 +33,10 @@ module.exports = {
 
       return res.status(200).json({ relatorio });
     } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Erro ao gerar relatório', detalhes: err.message });
+      return res.status(err.status || 500).json({ 
+        error: 'Erro ao gerar relatório', 
+        detalhes: err.message 
+      });
     }
   }
 };

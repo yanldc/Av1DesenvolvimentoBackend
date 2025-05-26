@@ -3,8 +3,12 @@ const portaoService = require('../service/portaoService');
 
 module.exports = {
   getPortao: async (req, res) => {
-    const portao = await portaoService.getAllPortaos();
-    return res.json({ portao });
+    try {
+      const portao = await portaoService.getAllPortaos();
+      return res.json({ portao });
+    } catch (err) {
+      return res.status(err.status || 500).json({ error: err.message });
+    }
   },
 
   postPortao: async (req, res) => {
@@ -19,7 +23,7 @@ module.exports = {
       const newPortao = await portaoService.createPortao(data);
       return res.status(201).json({ portao: newPortao });
     } catch (err) {
-      return res.status(400).json({ error: err.message });
+      return res.status(err.status || 400).json({ error: err.message });
     }
   },
 
@@ -33,10 +37,10 @@ module.exports = {
     const portaoId = req.params.id;
 
     try {
-      await portaoService.editPortao(portaoId, data);
-      return res.status(200).json({ success: true });
+      const updatedPortao = await portaoService.editPortao(portaoId, data);
+      return res.status(200).json({ success: true, portao: updatedPortao });
     } catch (err) {
-      return res.status(400).json({ error: err.message });
+      return res.status(err.status || 400).json({ error: err.message });
     }
   },
 
@@ -47,7 +51,7 @@ module.exports = {
       await portaoService.deletePortao(portaoId);
       return res.status(200).json({ success: true });
     } catch (err) {
-      return res.status(400).json({ error: err.message });
+      return res.status(err.status || 400).json({ error: err.message });
     }
   },
 };

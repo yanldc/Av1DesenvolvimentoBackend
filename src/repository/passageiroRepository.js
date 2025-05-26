@@ -45,11 +45,7 @@ module.exports = {
 
   deletePassageiroById: async (id) => {
     return await Passageiro.findByIdAndDelete(id);
-  },
-
-  findPassageirosByVooId: async (vooId) => {
-    return await Passageiro.find({
-      vooId: new mongoose.Types.ObjectId(vooId)
-    });
   }
+  
+  // Removed duplicate method findPassageirosByVooId as it's identical to findAllPassageirosByVoo
 };

@@ -9,7 +9,7 @@ const apiRouters = require('./src/routes/router');
 mongoose.connect(process.env.DATABASE);
 mongoose.Promise = global.Promise;
 mongoose.connection.on('error', (error) => {
-    console.error("ERRO" + error.mensage)
+    console.error("ERRO: " + error.message)
 });
 
 const server = express();
@@ -19,5 +19,5 @@ server.use(express.urlencoded({extended:true}));
 server.use("/", apiRouters);
 
 const servico = server.listen(process.env.PORT, ()=> {
-    console.log("Servidor rodando na porta" + servico.address().port);
+    console.log("Servidor rodando na porta: " + servico.address().port);
 });

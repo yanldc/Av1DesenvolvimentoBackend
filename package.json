@@ -1,7 +1,7 @@
 {
   "name": "av1desenvolvimentobackend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "nodemon server.js"
   },
