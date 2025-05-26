@@ -1,0 +1,408 @@
+openapi: 3.0.0
+info:
+  title: API de Gerenciamento de Aeroporto
+  version: 1.0.0
+  description: API para gerenciamento de voos, passageiros, portões e funcionários de um aeroporto
+
+servers:
+  - url: http://localhost:7779
+    description: Servidor de desenvolvimento
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  
+  schemas:
+    Passageiro:
+      type: object
+      required:
+        - nome
+        - cpf
+        - vooId
+      properties:
+        nome:
+          type: string
+          description: Nome do passageiro
+        cpf:
+          type: string
+          description: CPF do passageiro
+        vooId:
+          type: string
+          description: ID do voo associado
+        statusCheckIn:
+          type: string
+          description: Status do check-in (pendente, realizado, liberado, bloqueado)
+    
+    Voo:
+      type: object
+      required:
+        - numeroVoo
+        - origem
+        - destino
+        - dataHoraPartida
+        - portaoId
+        - status
+      properties:
+        numeroVoo:
+          type: number
+          description: Número do voo
+        origem:
+          type: string
+          description: Local de origem
+        destino:
+          type: string
+          description: Local de destino
+        dataHoraPartida:
+          type: string
+          format: date-time
+          description: Data e hora de partida
+        portaoId:
+          type: string
+          description: ID do portão associado
+        status:
+          type: string
+          enum: [programado, embarque, concluido]
+          description: Status do voo
+    
+    Portao:
+      type: object
+      required:
+        - codigo
+        - disponivel
+      properties:
+        codigo:
+          type: string
+          description: Código do portão
+        disponivel:
+          type: boolean
+          description: Indica se o portão está disponível
+    
+    Funcionario:
+      type: object
+      required:
+        - name
+        - email
+        - password
+        - cargo
+      properties:
+        name:
+          type: string
+          description: Nome do funcionário
+        email:
+          type: string
+          format: email
+          description: Email do funcionário
+        password:
+          type: string
+          format: password
+          description: Senha do funcionário
+        cargo:
+          type: string
+          enum: [admin, servidor]
+          description: Cargo do funcionário
+    
+    Login:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email do funcionário
+        password:
+          type: string
+          format: password
+          description: Senha do funcionário
+
+paths:
+  /passageiro:
+    get:
+      summary: Retorna todos os passageiros
+      tags: [Passageiros]
+      responses:
+        200:
+          description: Lista de passageiros
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  passageiro:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Passageiro'
+    post:
+      summary: Cria um novo passageiro
+      tags: [Passageiros]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Passageiro'
+      responses:
+        201:
+          description: Passageiro criado com sucesso
+        400:
+          description: Dados inválidos
+  
+  /passageiro/{vooId}:
+    get:
+      summary: Retorna passageiros de um voo específico
+      tags: [Passageiros]
+      parameters:
+        - in: path
+          name: vooId
+          schema:
+            type: string
+          required: true
+          description: ID do voo
+      responses:
+        200:
+          description: Lista de passageiros do voo
+        400:
+          description: ID de voo inválido
+  
+  /passageiro/{id}:
+    put:
+      summary: Atualiza um passageiro existente
+      tags: [Passageiros]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID do passageiro
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Passageiro'
+      responses:
+        200:
+          description: Passageiro atualizado com sucesso
+        400:
+          description: Dados inválidos
+    delete:
+      summary: Remove um passageiro
+      tags: [Passageiros]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID do passageiro
+      responses:
+        200:
+          description: Passageiro removido com sucesso
+        400:
+          description: Erro ao remover passageiro
+  
+  /voo:
+    get:
+      summary: Retorna todos os voos
+      tags: [Voos]
+      responses:
+        200:
+          description: Lista de voos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  voo:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Voo'
+    post:
+      summary: Cria um novo voo
+      tags: [Voos]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Voo'
+      responses:
+        201:
+          description: Voo criado com sucesso
+        400:
+          description: Dados inválidos
+        401:
+          description: Não autorizado
+  
+  /voo/{id}:
+    put:
+      summary: Atualiza um voo existente
+      tags: [Voos]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID do voo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Voo'
+      responses:
+        200:
+          description: Voo atualizado com sucesso
+        400:
+          description: Dados inválidos
+        401:
+          description: Não autorizado
+        403:
+          description: Acesso negado (apenas admin)
+    delete:
+      summary: Remove um voo
+      tags: [Voos]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID do voo
+      responses:
+        200:
+          description: Voo removido com sucesso
+        400:
+          description: Erro ao remover voo
+  
+  /portao:
+    get:
+      summary: Retorna todos os portões
+      tags: [Portões]
+      responses:
+        200:
+          description: Lista de portões
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  portao:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Portao'
+    post:
+      summary: Cria um novo portão
+      tags: [Portões]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Portao'
+      responses:
+        201:
+          description: Portão criado com sucesso
+        400:
+          description: Dados inválidos
+  
+  /portao/{id}:
+    put:
+      summary: Atualiza um portão existente
+      tags: [Portões]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID do portão
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Portao'
+      responses:
+        200:
+          description: Portão atualizado com sucesso
+        400:
+          description: Dados inválidos
+    delete:
+      summary: Remove um portão
+      tags: [Portões]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID do portão
+      responses:
+        200:
+          description: Portão removido com sucesso
+        400:
+          description: Erro ao remover portão
+  
+  /relatorio:
+    get:
+      summary: Gera relatório de voos do dia
+      tags: [Relatórios]
+      responses:
+        200:
+          description: Relatório gerado com sucesso
+        500:
+          description: Erro ao gerar relatório
+  
+  /funcionario:
+    post:
+      summary: Cria um novo funcionário
+      tags: [Funcionários]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Funcionario'
+      responses:
+        201:
+          description: Funcionário criado com sucesso
+        400:
+          description: Dados inválidos
+  
+  /login:
+    post:
+      summary: Realiza login de funcionário
+      tags: [Autenticação]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        200:
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  token:
+                    type: string
+                  funcionario:
+                    type: object
+        401:
+          description: Credenciais inválidas

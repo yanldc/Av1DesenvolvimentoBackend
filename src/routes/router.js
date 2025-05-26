@@ -17,8 +17,7 @@ const authController = require('../controller/authController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
 const checkAdmin = require('../middlewares/checkAdmin');
-
-
+const swagger = require('../config/swagger');
 
 router.get('/passageiro', passageiroController.getPassageiro);
 router.get('/passageiro/:vooId', passageiroController.getPassageiroByVoo);
@@ -39,6 +38,10 @@ router.get('/relatorio', relatorioController.getRelatorio);
 router.post('/funcionario', funcionarioValidator.postFuncionarioAction, funcionarioController.postFuncionario)
 router.post('/login', authController.login);
 
+// Rota para documentação da API
+router.use('/api-docs', swagger.serve, swagger.setup);
+
+// Rotas protegidas por autenticação
 router.use(authMiddleware)
 router.post('/voo', vooValidator.postVooAction, vooController.postVoo)
 router.put('/voo/:id', vooValidator.editVooAction, checkAdmin, vooController.editVoo )
